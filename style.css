@@ -51,7 +51,6 @@ ul {
 }
 
 .input--bordered {
-    display: block;
     width: 100%;
     height: 56px;
     padding: 15px 20px;
@@ -64,13 +63,25 @@ ul {
     outline: none;
 }
 
+.input-field {
+  width: 100%;
+  height: 56px;
+  padding: 15px 20px;
+  font-family: FuturaPT,-apple-system,BlinkMacSystemFont,Arial,sans-serif;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 26px;
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid #656565;
+
+  outline: none;
+
+}
 
 
 .input-block {
     margin-bottom: 15px;
-}
-
-.input-block {
     position: relative;
 }
 
@@ -94,12 +105,42 @@ ul {
     color: #656565;
 }
 
-.range {
-    width: 100%;
-    height: 4px;
-    background-color: transparent;
-    /* accent-color: #00a8c8; */
+#total-cost {
+  position: absolute;
+  top:71px;
+  left:0;
+  -webkit-appearance: none;
+  appearance: none;
+  width: 99%;
+  height: 4px;
+  margin: 5.4px 0;
+  background: linear-gradient(to right, #00829B, #00829B calc( var(--thumb-percent) * 100% ), #fff calc( var(--thumb-percent) * 100% ), #fff);
 }
+#advance-payment {
+  -webkit-appearance: none;
+  appearance: none;
+  position: absolute;
+  top:71px;
+  left:0;
+  width: 99%;
+  height: 4px;
+  margin: 5.4px 0;
+  background: linear-gradient(to right, #00829B, #00829B calc( var(--thumb-percent-2) * 100% ), #fff calc( var(--thumb-percent-2) * 100% ), #fff);
+}
+#credit-term-range {
+  -webkit-appearance: none;
+  appearance: none;
+  position: absolute;
+  top:71px;
+  left:0;
+  width: 99%;
+  height: 4px;
+  margin: 5.4px 0;
+  background: linear-gradient(to right, #00829B, #00829B calc( var(--thumb-percent-3) * 100% ), #fff calc( var(--thumb-percent-3) * 100% ), #fff);
+}
+
+
+
 
 /* For WebKit/Blink Browsers */
 input[type="range"]::-webkit-slider-thumb {
@@ -110,8 +151,10 @@ input[type="range"]::-webkit-slider-thumb {
   height: 25px;
   width: 10px;
   cursor: pointer;
+  /* position: relative;
+  top: 50%;
+  transform: translateY(-50%); */
 }
-
 /* For Firefox */
 input[type="range"]::-moz-range-thumb {
   background-color: #00829B;
@@ -128,22 +171,21 @@ input[type="range"]::-ms-thumb {
   height: 25px;
   width: 10px;
   cursor: pointer;
+
 }
 
 /* Remove default styles in all browsers */
 input[type="range"] {
   -webkit-appearance: none;
-  appearance: none;
+  appearance: none; 
   width: 100%;
   margin: 5.4px 0;
 }
 
-/* Apply styles after removing default styles */
 input[type="range"]:focus {
   outline: none;
 }
 
-/* Firefox overrides */
 input[type="range"]::-moz-focus-outer {
   border: 0;
 }
@@ -160,6 +202,7 @@ input[type="range"]::-moz-focus-outer {
     padding: 10px 20px;
     background-color: #F8F8FA;
     width: fit-content;
+    height: 62px
     
   }
 
@@ -175,6 +218,7 @@ input[type="range"]::-moz-focus-outer {
   .loan__wrap {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     margin-bottom: 15px;
   }
   
@@ -340,3 +384,5 @@ input[type="range"]::-moz-focus-outer {
 .payment__input:checked + .custom-radio-btn::before  {
   opacity: 1;
 }
+
+
