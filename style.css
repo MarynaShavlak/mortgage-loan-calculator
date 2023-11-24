@@ -30,13 +30,13 @@ ul {
    width: 540px;
 }
 
-.calculator-content {
+.calculator__content {
     padding: 50px;
     width: 540px;
 }
 
 
-.label {
+.input-label {
     font-family: Roboto,-apple-system,BlinkMacSystemFont,Arial,sans-serif;
     font-size: 12px;
     font-weight: 400;
@@ -90,14 +90,14 @@ ul {
   margin:0;
 }
 
-.limits {
+.input-limits {
     margin-top: 15px;
     display: flex;
     justify-content: space-between;
 }
 
 
-.limit {
+.input-limit  {
     font-family: Roboto,-apple-system,BlinkMacSystemFont,Arial,sans-serif;
     font-size: 12px;
     font-weight: 400;
@@ -111,7 +111,7 @@ ul {
   left:0;
   -webkit-appearance: none;
   appearance: none;
-  width: 99%;
+  width: 100%;
   height: 4px;
   margin: 5.4px 0;
   background: linear-gradient(to right, #00829B, #00829B calc( var(--thumb-percent) * 100% ), #fff calc( var(--thumb-percent) * 100% ), #fff);
@@ -122,7 +122,7 @@ ul {
   position: absolute;
   top:71px;
   left:0;
-  width: 99%;
+  width: 100%;
   height: 4px;
   margin: 5.4px 0;
   background: linear-gradient(to right, #00829B, #00829B calc( var(--thumb-percent-2) * 100% ), #fff calc( var(--thumb-percent-2) * 100% ), #fff);
@@ -133,7 +133,7 @@ ul {
   position: absolute;
   top:71px;
   left:0;
-  width: 99%;
+  width: 100%;
   height: 4px;
   margin: 5.4px 0;
   background: linear-gradient(to right, #00829B, #00829B calc( var(--thumb-percent-3) * 100% ), #fff calc( var(--thumb-percent-3) * 100% ), #fff);
@@ -266,7 +266,7 @@ input[type="range"]::-moz-focus-outer {
     border: 1px solid rgba(255,255,255,0.1);
     padding: 20px;
   }
-.label__wrap {
+.input-label__wrap {
    display: flex;
    justify-content: space-between;
    align-items: baseline;
