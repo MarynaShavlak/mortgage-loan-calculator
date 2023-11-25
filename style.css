@@ -442,13 +442,11 @@ input[type='range']::-moz-focus-outer {
 }
 
 .fee__checkbox:checked + .fee__checkbox--custom {
-  border-color:#00503c;
+  border-color: #00503c;
   background-color: #00503c;
   outline: none;
   color: #ffffff;
 }
-
-
 
 .fee__checkbox--custom {
   display: flex;
@@ -462,4 +460,7 @@ input[type='range']::-moz-focus-outer {
   border: 1px solid #000000;
   color: transparent;
   /* color: #00503c; */
+}
+.item__label {
+   max-width: 214px;
 }

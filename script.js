@@ -1,4 +1,6 @@
-import { loanFees } from "./loanFeesData.js";
+import { loanFees } from './loanFeesData.js';
+import { renderFees } from './renderFees.js';
+
 const inputsConfig = {
   totalCost: createInputConfig(
     '#total-cost',
@@ -28,7 +30,12 @@ const loanDetails = {
   totalFees: 1000,
 };
 
-
+let selectedFees = [
+  {
+    fee: { name: 'Комісія за надання кредиту', amount: 1000 },
+    key: 'loanIssuanceFee',
+  },
+];
 
 const loanAmountEl = document.querySelector('.loan-amount__value');
 const annuityRadio = document.querySelector('.input--annuity');
@@ -36,6 +43,7 @@ const classicRadio = document.querySelector('.input--classic');
 annuityRadio.addEventListener('change', handleLoanType);
 classicRadio.addEventListener('change', handleLoanType);
 updateCalculatorInterface();
+renderFees(loanFees);
 
 Object.keys(inputsConfig).forEach(inputKey => {
   const { input, badge } = inputsConfig[inputKey];
@@ -45,6 +53,48 @@ Object.keys(inputsConfig).forEach(inputKey => {
     handleBlur(inputKey, inputsConfig[inputKey].range),
   );
 });
+
+export function updateSelectedFees(feeKey, isChecked) {
+  if (isChecked) {
+    selectedFees.push({ key: feeKey, fee: loanFees[feeKey] });
+  } else {
+    selectedFees = selectedFees.filter(fee => fee.key !== feeKey);
+  }
+
+  updateAddOptionsInterface(feeKey);
+}
+
+function updateAddOptionsInterface(feeKey) {
+  const addOptionsList = document.querySelector('.add-options-list');
+  const fee = selectedFees.find(item => item.key === feeKey);
+  if (fee) {
+    const listItem = createFeeItem(feeKey, fee);
+    addOptionsList.appendChild(listItem);
+  } else {
+    addOptionsList.innerHTML = '';
+    const filtered = selectedFees.filter(item => item.key !== feeKey);
+    [...filtered].forEach(fee => {
+      const listItem = createFeeItem(feeKey, fee);
+      addOptionsList.appendChild(listItem);
+    });
+  }
+  
+}
+
+function createFeeItem(feeKey, fee) {
+  const listItem = document.createElement('li');
+  listItem.classList.add('add-option-item');
+  listItem.setAttribute('data-id', feeKey);
+  const labelSpan = document.createElement('span');
+  labelSpan.classList.add('item__label');
+  labelSpan.textContent = fee.fee.name;
+  const valueSpan = document.createElement('span');
+  valueSpan.classList.add('item__value');
+  valueSpan.textContent = `${fee.fee.amount} грн`;
+  listItem.appendChild(labelSpan);
+  listItem.appendChild(valueSpan);
+  return listItem;
+}
 
 function updateThumb(inputKey) {
   updateRange(inputKey);
@@ -291,34 +341,3 @@ function generateMonthsArray(startDate, numberOfMonths) {
 
   return months;
 }
-
-
-
-const feesListElement = document.querySelector('.feesList');
-
-  for (const feeKey in loanFees) {
-    if (loanFees.hasOwnProperty(feeKey)) {
-      const fee = loanFees[feeKey];
-
-      const listItem = document.createElement('li');
-      listItem.className ='feesList__item';
-      const checkbox = document.createElement('input');
-      checkbox.type = 'checkbox';
-      checkbox.className = 'fee__checkbox'
-
-
-      checkbox.id = feeKey;
-      
-      const label = document.createElement('label');
-      label.className ='feesList__label';
-      const span = document.createElement('span');
-      span.textContent = `${fee.name}`;
-      const checkIcon = document.createElement('i');
-      checkIcon.className = 'fa-solid fa-check fee__checkbox--custom';
-      label.appendChild(checkbox);
-      label.appendChild(checkIcon);
-      label.appendChild(span);
-      listItem.appendChild(label);
-      feesListElement.appendChild(listItem);
-    }
-  }
