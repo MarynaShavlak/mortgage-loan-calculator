@@ -40,6 +40,7 @@ let selectedFees = [
 const loanAmountEl = document.querySelector('.loan-amount__value');
 const annuityRadio = document.querySelector('.input--annuity');
 const classicRadio = document.querySelector('.input--classic');
+
 annuityRadio.addEventListener('change', handleLoanType);
 classicRadio.addEventListener('change', handleLoanType);
 updateCalculatorInterface();
@@ -67,18 +68,47 @@ export function updateSelectedFees(feeKey, isChecked) {
 function updateAddOptionsInterface(feeKey) {
   const addOptionsList = document.querySelector('.add-options-list');
   const fee = selectedFees.find(item => item.key === feeKey);
+
   if (fee) {
+    handleFeeUpdate(feeKey, fee, addOptionsList);
+  } else {
+    handleFeeRemoval(feeKey, addOptionsList);
+  }
+}
+
+function handleFeeUpdate(feeKey, fee, addOptionsList) {
+  const listItem = createFeeItem(feeKey, fee);
+  addOptionsList.appendChild(listItem);
+
+  updateTotalFees();
+
+  const totalPayment = calculateTotalPayment();
+  updateTotalPaymentDisplay(totalPayment);
+  updateLoanCostsDisplay(loanDetails.loanAmount, totalPayment);
+}
+
+function handleFeeRemoval(feeKey, addOptionsList) {
+  addOptionsList.innerHTML = '';
+
+  const filtered = selectedFees.filter(item => item.key !== feeKey);
+  filtered.forEach(fee => {
     const listItem = createFeeItem(feeKey, fee);
     addOptionsList.appendChild(listItem);
-  } else {
-    addOptionsList.innerHTML = '';
-    const filtered = selectedFees.filter(item => item.key !== feeKey);
-    [...filtered].forEach(fee => {
-      const listItem = createFeeItem(feeKey, fee);
-      addOptionsList.appendChild(listItem);
-    });
-  }
-  
+
+    updateTotalFees();
+
+    const totalPayment = calculateTotalPayment();
+    updateTotalPaymentDisplay(totalPayment);
+    updateLoanCostsDisplay(loanDetails.loanAmount, totalPayment);
+  });
+}
+
+function updateTotalFees() {
+  const totalAmount = selectedFees.reduce(
+    (sum, current) => sum + current.fee.amount,
+    0,
+  );
+  loanDetails.totalFees = totalAmount;
 }
 
 function createFeeItem(feeKey, fee) {
@@ -118,21 +148,29 @@ function updateLoanType() {
 }
 
 function updateCalculatorInterface() {
-  let monthlyPayment;
-  let totalPayment;
-  if (loanDetails.type === 'annuity') {
-    monthlyPayment = calculateAnnuityMonthlyPayment(loanDetails);
-    totalPayment = calculateAnnuityTotalPayment(loanDetails);
-  } else if (loanDetails.type === 'classic') {
-    monthlyPayment = calculateClassicMonthlyPayment(loanDetails);
-    totalPayment = calculateClassicTotalPayment(loanDetails);
-  }
-
-  const realAnnualInterestRate = calculateRealAnnualInterestRate(loanDetails);
+  const totalPayment = calculateTotalPayment();
+  const monthlyPayment = calculateMonthlyPayment();
   updateMonthlyPaymentDisplay(monthlyPayment);
   updateTotalPaymentDisplay(totalPayment);
   updateLoanCostsDisplay(loanDetails.loanAmount, totalPayment);
+  const realAnnualInterestRate = calculateRealAnnualInterestRate(loanDetails);
   updateRealAnnualInterestRateDisplay(realAnnualInterestRate);
+}
+
+function calculateTotalPayment() {
+  if (loanDetails.type === 'annuity') {
+    return calculateAnnuityTotalPayment(loanDetails);
+  } else if (loanDetails.type === 'classic') {
+    return calculateClassicTotalPayment(loanDetails);
+  }
+}
+
+function calculateMonthlyPayment() {
+  if (loanDetails.type === 'annuity') {
+    return calculateAnnuityMonthlyPayment(loanDetails);
+  } else if (loanDetails.type === 'classic') {
+    return calculateClassicMonthlyPayment(loanDetails);
+  }
 }
 
 function handleLoanType() {
@@ -155,9 +193,9 @@ function updateMonthlyPaymentDisplay(monthlyPayment) {
   monthAmountEl.textContent = numberWithSpaces(monthlyPayment);
 }
 
-function updateTotalPaymentDisplay(monthlyPayment) {
+function updateTotalPaymentDisplay(totalPayment) {
   const totalPaymentEl = document.querySelector('.value--total');
-  totalPaymentEl.textContent = `${numberWithSpaces(monthlyPayment)} грн`;
+  totalPaymentEl.textContent = `${numberWithSpaces(totalPayment)} грн`;
 }
 
 function updateLoanCostsDisplay(loanAmount, totalPayment) {
@@ -225,7 +263,8 @@ function calculateAnnuityMonthlyPayment(loanDetails) {
 }
 
 function calculateAnnuityTotalPayment(loanDetails) {
-  const { loanAmount, annualInterestRate, loanTermInMonths } = loanDetails;
+  const { loanAmount, annualInterestRate, loanTermInMonths, totalFees } =
+    loanDetails;
   const monthlyInterestRate = annualInterestRate / 100 / 12;
   const { numerator, denominator } = calculateNumeratorDenominator(
     loanAmount,
@@ -233,7 +272,7 @@ function calculateAnnuityTotalPayment(loanDetails) {
     loanTermInMonths,
   );
 
-  const totalPayment = (numerator / denominator) * loanTermInMonths;
+  const totalPayment = (numerator / denominator) * loanTermInMonths + totalFees;
   return parseFloat(totalPayment.toFixed(0));
 }
 
@@ -341,3 +380,4 @@ function generateMonthsArray(startDate, numberOfMonths) {
 
   return months;
 }
+
