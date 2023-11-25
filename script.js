@@ -1,83 +1,167 @@
-const inputs = {
-      totalCost: document.querySelector('#total-cost'),
-      advancePayment: document.querySelector('#advance-payment'),
-      creditTerm: document.querySelector('#credit-term-range'),
+const inputsConfig = {
+  totalCost: createInputConfig(
+    '#total-cost',
+    '#total-cost-badge',
+    '--thumb-percent',
+    { min: 100000, max: 10000000 },
+  ),
+  advancePayment: createInputConfig(
+    '#advance-payment',
+    '#advance-payment-badge',
+    '--thumb-percent-2',
+    { min: 30, max: 90 },
+  ),
+  creditTerm: createInputConfig(
+    '#credit-term-range',
+    '#credit-term-range-badge',
+    '--thumb-percent-3',
+    { min: 12, max: 240 },
+  ),
 };
 
-const inputsBadges = {
-      totalCost: document.querySelector('#total-cost-badge'),
-      advancePayment: document.querySelector('#advance-payment-badge'),
-      creditTerm: document.querySelector('#credit-term-range-badge'),
-}
-const thumbs = {
-      totalCost: '--thumb-percent',
-      advancePayment: '--thumb-percent-2',
-      creditTerm: '--thumb-percent-3',
+const loanDetails = {
+  loanAmount: 70000,
+  annualInterestRate: 19.7,
+  loanTermInMonths: 12,
+  type: 'annuity',
 };
 
 const loanAmountEl = document.querySelector('.loan-amount__value');
 
-    
-Object.keys(inputs).forEach((inputKey) => {
-      inputs[inputKey].addEventListener('input', () => updateThumb(inputKey));
-});
-    
-    
-Object.entries(inputsBadges).forEach(([inputKey, inputElement]) => {
-      let minValue, maxValue;
-   
-      switch (inputKey) {
-        case 'totalCost':
-          minValue = 100000;
-          maxValue = 10000000;
-          break;
-        case 'advancePayment':
-          minValue = 30;
-          maxValue = 90;
-          break;
-        case 'creditTerm':
-          minValue = 12;
-          maxValue = 240;
-          break;
-        default:
-          minValue = 0;
-          maxValue = Infinity;
-      }
-    
-      inputElement.addEventListener('blur', handleBlur(inputKey, minValue, maxValue));
+
+
+Object.keys(inputsConfig).forEach(inputKey => {
+  const { input, badge } = inputsConfig[inputKey];
+  input.addEventListener('input', () => updateThumb(inputKey));
+  badge.addEventListener(
+    'blur',
+    handleBlur(inputKey, inputsConfig[inputKey].range),
+  );
 });
 
 function updateThumb(inputKey) {
-      const thumbPercent = (inputs[inputKey].value - inputs[inputKey].min) / (inputs[inputKey].max - inputs[inputKey].min);
-      document.documentElement.style.setProperty(thumbs[inputKey], thumbPercent);
-      inputsBadges[inputKey].value = numberWithSpaces(inputs[inputKey].value);
-      if (inputKey === 'totalCost' || inputKey === 'advancePayment') {
-            updateLoanAmount();
-      }
-
+  updateRange(inputKey);
+  handleSpecialCases(inputKey);
+  const monthlyPayment = calculateAnnuityMonthlyPayment(loanDetails);
+  const totalPayment = calculateTotalPayment(loanDetails);
+  updateMonthlyPaymentDisplay(monthlyPayment);
+  updateTotalPaymentDisplay(totalPayment);
+  updateLoanCostsDisplay( loanDetails.loanAmount, totalPayment)
 }
 
-function updateLoanAmount() {
-      const totalCost = parseFloat(inputs.totalCost.value) || 0;
-      const advancePayment = parseFloat(inputs.advancePayment.value) || 0;
-      const loanAmount = totalCost - (totalCost * advancePayment / 100);
-      loanAmountEl.textContent = numberWithSpaces(loanAmount);
+function updateRange(inputKey) {
+  const { input, thumb, badge } = inputsConfig[inputKey];
+  const thumbPercent = (input.value - input.min) / (input.max - input.min);
+  document.documentElement.style.setProperty(thumb, thumbPercent);
+  badge.value = numberWithSpaces(input.value);
+}
+
+function handleSpecialCases(inputKey) {
+  if (inputKey === 'totalCost' || inputKey === 'advancePayment') {
+    const loanAmount = calculateLoanAmount();
+    updateLoanAmount(loanAmount);
+    loanDetails.loanAmount = loanAmount;
+  } else if (inputKey === 'creditTerm') {
+    loanDetails.loanTermInMonths = inputsConfig[inputKey].input.value;
+  }
+}
+
+function updateMonthlyPaymentDisplay( monthlyPayment) {
+      const monthAmountEl = document.querySelector('.month__value');
+  monthAmountEl.textContent = numberWithSpaces(monthlyPayment);
+}
+
+function updateTotalPaymentDisplay( monthlyPayment) {
+      const totalPaymentEl = document.querySelector('.value--total');
+      totalPaymentEl.textContent = `${numberWithSpaces(monthlyPayment)} грн`;
+}
+function updateLoanCostsDisplay( loanAmount, totalPayment) {
+      const loanCostsEl = document.querySelector('.value--costs');
+      loanCostsEl.textContent = `${numberWithSpaces(calculateLoanCosts(loanAmount, totalPayment))} грн`;
+}
+
+
+function calculateLoanAmount() {
+  const totalCost = parseFloat(inputsConfig.totalCost.input.value) || 0;
+  const advancePayment =
+    parseFloat(inputsConfig.advancePayment.input.value) || 0;
+  const loanAmount = totalCost - (totalCost * advancePayment) / 100;
+  return loanAmount;
+}
+
+function updateLoanAmount(loanAmount) {
+  loanAmountEl.textContent = numberWithSpaces(loanAmount);
 }
 
 function numberWithSpaces(x) {
-      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 }
-     
-function  handleBlur(inputKey, minValue, maxValue) {
-         return function () {
-        const cleanedValue = this.value.replace(/[^\d\s]/g, '');
-        const trimmedValue = cleanedValue.replace(/\s/g, '');
-        const clampedValue = Math.min(Math.max(parseInt(trimmedValue, 10), minValue), maxValue);
-        console.log('clampedValue: ', clampedValue);
-        console.log('inputKey: ', inputKey);
-        inputsBadges[inputKey].value = numberWithSpaces(clampedValue);
-        inputs[inputKey].value = clampedValue;
-        updateThumb(inputKey);
-      };
-};
+
+function handleBlur(inputKey, { min, max }) {
+  return function () {
+    const cleanedValue = this.value.replace(/[^\d\s]/g, '');
+    const trimmedValue = cleanedValue.replace(/\s/g, '');
+    const clampedValue = Math.min(
+      Math.max(parseInt(trimmedValue, 10), min),
+      max,
+    );
+
+    const { input, badge } = inputsConfig[inputKey];
+    badge.value = numberWithSpaces(clampedValue);
+    input.value = clampedValue;
+
+    updateThumb(inputKey);
+  };
+}
+
+function createInputConfig(inputSelector, badgeSelector, thumb, range) {
+  const input = document.querySelector(inputSelector);
+  const badge = document.querySelector(badgeSelector);
+  return { input, badge, thumb, range };
+}
+
+function calculateAnnuityMonthlyPayment(loanDetails) {
+  const { loanAmount, annualInterestRate, loanTermInMonths } = loanDetails;
+  const monthlyInterestRate = annualInterestRate / 100 / 12;
+  const { numerator, denominator } = calculateNumeratorDenominator(
+    loanAmount,
+    monthlyInterestRate,
+    loanTermInMonths,
+  );
+
+  const monthlyPayment = numerator / denominator;
+  return parseFloat(monthlyPayment.toFixed(0));
+}
+
+function calculateTotalPayment(loanDetails) {
+  const { loanAmount, annualInterestRate, loanTermInMonths } = loanDetails;
+  const monthlyInterestRate = annualInterestRate / 100 / 12;
+  const { numerator, denominator } = calculateNumeratorDenominator(
+    loanAmount,
+    monthlyInterestRate,
+    loanTermInMonths,
+  );
+
+  const totalPayment = (numerator / denominator) * loanTermInMonths;
+  return parseFloat(totalPayment.toFixed(0));
+}
+
+function calculateLoanCosts(loanAmount, totalPayment) {
+return totalPayment - loanAmount;
+}
+
+function calculateNumeratorDenominator(
+  loanAmount,
+  monthlyInterestRate,
+  loanTermInMonths,
+) {
+  const numerator =
+    loanAmount *
+    monthlyInterestRate *
+    Math.pow(1 + monthlyInterestRate, loanTermInMonths);
+  const denominator = Math.pow(1 + monthlyInterestRate, loanTermInMonths) - 1;
+
+  return { numerator, denominator };
+}
+
 
