@@ -28,8 +28,6 @@ const loanDetails = {
 
 const loanAmountEl = document.querySelector('.loan-amount__value');
 
-
-
 Object.keys(inputsConfig).forEach(inputKey => {
   const { input, badge } = inputsConfig[inputKey];
   input.addEventListener('input', () => updateThumb(inputKey));
@@ -46,7 +44,7 @@ function updateThumb(inputKey) {
   const totalPayment = calculateTotalPayment(loanDetails);
   updateMonthlyPaymentDisplay(monthlyPayment);
   updateTotalPaymentDisplay(totalPayment);
-  updateLoanCostsDisplay( loanDetails.loanAmount, totalPayment)
+  updateLoanCostsDisplay(loanDetails.loanAmount, totalPayment);
 }
 
 function updateRange(inputKey) {
@@ -66,20 +64,21 @@ function handleSpecialCases(inputKey) {
   }
 }
 
-function updateMonthlyPaymentDisplay( monthlyPayment) {
-      const monthAmountEl = document.querySelector('.month__value');
+function updateMonthlyPaymentDisplay(monthlyPayment) {
+  const monthAmountEl = document.querySelector('.month__value');
   monthAmountEl.textContent = numberWithSpaces(monthlyPayment);
 }
 
-function updateTotalPaymentDisplay( monthlyPayment) {
-      const totalPaymentEl = document.querySelector('.value--total');
-      totalPaymentEl.textContent = `${numberWithSpaces(monthlyPayment)} грн`;
+function updateTotalPaymentDisplay(monthlyPayment) {
+  const totalPaymentEl = document.querySelector('.value--total');
+  totalPaymentEl.textContent = `${numberWithSpaces(monthlyPayment)} грн`;
 }
-function updateLoanCostsDisplay( loanAmount, totalPayment) {
-      const loanCostsEl = document.querySelector('.value--costs');
-      loanCostsEl.textContent = `${numberWithSpaces(calculateLoanCosts(loanAmount, totalPayment))} грн`;
+function updateLoanCostsDisplay(loanAmount, totalPayment) {
+  const loanCostsEl = document.querySelector('.value--costs');
+  loanCostsEl.textContent = `${numberWithSpaces(
+    calculateLoanCosts(loanAmount, totalPayment),
+  )} грн`;
 }
-
 
 function calculateLoanAmount() {
   const totalCost = parseFloat(inputsConfig.totalCost.input.value) || 0;
@@ -147,7 +146,7 @@ function calculateTotalPayment(loanDetails) {
 }
 
 function calculateLoanCosts(loanAmount, totalPayment) {
-return totalPayment - loanAmount;
+  return totalPayment - loanAmount;
 }
 
 function calculateNumeratorDenominator(
@@ -164,4 +163,29 @@ function calculateNumeratorDenominator(
   return { numerator, denominator };
 }
 
+function calculateRealAnnualInterestRate(
+  nominalInterestRate,
+  compoundingPeriods,
+) {
+  const nominalRateDecimal = nominalInterestRate / 100;
+  const realAnnualInterestRate =
+    Math.pow(1 + nominalRateDecimal / compoundingPeriods, compoundingPeriods) -
+    1;
 
+  const realAnnualInterestRatePercentage = realAnnualInterestRate * 100;
+
+  return realAnnualInterestRatePercentage;
+}
+
+const nominalInterestRate = 19.7; // in percentage
+const compoundingPeriods = 12; // monthly compounding
+
+const realAnnualInterestRate = calculateRealAnnualInterestRate(
+  nominalInterestRate,
+  compoundingPeriods,
+);
+
+console.log(
+  'Real Annual Interest Rate:',
+  realAnnualInterestRate.toFixed(2) + '%',
+);
