@@ -172,10 +172,74 @@
             <span class="results__value value--real">24.66%</span>
           </li>
         </ul>
-        <button type="button" class="send-form-btn">Надіслати заявку</button>
+        <button type="button" class="send-form-btn" data-modal-open>Надіслати заявку</button>
       </div>
     </div>
-
+    <div class="backdrop backdrop--hidden" data-modal>
+        <div class="modal" >
+          <p class="modal__title">Залиште заявку на сайті</p>
+  
+          <form class="application">
+            <ul class="application__user-info list">
+              <li class="application__item">
+                <label class="application__field">
+                  <span class="application__label">Ім'я</span>
+                  <span class="application__wrap"
+                    ><input
+                      class="application__input"
+                      type="text"
+                      name="modal-user-name"
+                    />
+                    <i class="fa-solid fa-user application__icon"></i>
+                  </span>
+                </label>
+              </li>
+              <li class="application__item">
+                <label class="application__field">
+                  <span class="application__label">Телефон</span>
+                  <span class="application__wrap"> </span>
+                  <span class="application__wrap"
+                    ><input
+                      class="application__input"
+                      type="tel"
+                      name="modal-user-tel"
+                    />
+                    <i class="fa-solid fa-phone application__icon"></i>
+                  </span>
+                </label>
+              </li>
+             
+             
+            </ul>
+  
+            <label class="application__agreement">
+              <input
+                class="application__checkbox"
+                type="checkbox"
+                name="studio-policy-check"
+                value="accept-policy"
+                required
+              />
+              <i class="fa-solid fa-check application__checkbox-custom"></i>
+              <span
+                >Я погоджуюсь з&nbsp;
+                <a href="" class="application__agreement-link"
+                  >умовами онлайн-заявки та обробки персональних даних</a
+                ></span
+              >
+            </label>
+  
+            <button class="application__submit-btn" type="submit">
+              НАДІСЛАТИ ЗАЯВКУ
+            </button>
+          </form>
+  
+          <button type="button" class="modal__btn-close" data-modal-close>
+            <i class="fa-solid fa-xmark close-modal"></i>
+          </button>
+        </div>
+      </div>
+    <script src="modal.js" type="module"></script>
     <script src="script.js" type="module"></script>
   </body>
 </html>
