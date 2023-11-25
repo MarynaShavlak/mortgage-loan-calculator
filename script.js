@@ -24,9 +24,14 @@ const loanDetails = {
   annualInterestRate: 19.7,
   loanTermInMonths: 12,
   type: 'annuity',
+  totalFees: 1000,
 };
 
 const loanAmountEl = document.querySelector('.loan-amount__value');
+const annuityRadio = document.querySelector('.input--annuity');
+const classicRadio = document.querySelector('.input--classic');
+annuityRadio.addEventListener('change', handleLoanType);
+classicRadio.addEventListener('change', handleLoanType);
 
 Object.keys(inputsConfig).forEach(inputKey => {
   const { input, badge } = inputsConfig[inputKey];
@@ -40,11 +45,22 @@ Object.keys(inputsConfig).forEach(inputKey => {
 function updateThumb(inputKey) {
   updateRange(inputKey);
   handleSpecialCases(inputKey);
-  const monthlyPayment = calculateAnnuityMonthlyPayment(loanDetails);
-  const totalPayment = calculateTotalPayment(loanDetails);
+  let monthlyPayment;
+  let totalPayment;
+  if(loanDetails.type==='annuity') {
+      monthlyPayment = calculateAnnuityMonthlyPayment(loanDetails);
+      totalPayment = calculateAnnuityTotalPayment(loanDetails);
+  } else if(loanDetails.type==='classic'){
+      monthlyPayment = calculateClassicMonthlyPayment(loanDetails);
+      totalPayment = calculateClassicTotalPayment(loanDetails);
+  }
+  
+  const realAnnualInterestRate = calculateRealAnnualInterestRate(loanDetails);
+  console.log('realAnnualInterestRate: ', realAnnualInterestRate);
   updateMonthlyPaymentDisplay(monthlyPayment);
   updateTotalPaymentDisplay(totalPayment);
   updateLoanCostsDisplay(loanDetails.loanAmount, totalPayment);
+  updateRealAnnualInterestRateDisplay(realAnnualInterestRate);
 }
 
 function updateRange(inputKey) {
@@ -52,6 +68,42 @@ function updateRange(inputKey) {
   const thumbPercent = (input.value - input.min) / (input.max - input.min);
   document.documentElement.style.setProperty(thumb, thumbPercent);
   badge.value = numberWithSpaces(input.value);
+}
+
+function updateLoanType() {
+  if (annuityRadio.checked) {
+    loanDetails.type = 'annuity';
+  } else if (classicRadio.checked) {
+    loanDetails.type = 'classic';
+}
+}
+
+function updateCalculatorInterface() {
+      
+}
+
+
+
+
+function handleLoanType() {
+      updateLoanType();  
+      let monthlyPayment;
+  let totalPayment;
+  if(loanDetails.type==='annuity') {
+      monthlyPayment = calculateAnnuityMonthlyPayment(loanDetails);
+      totalPayment = calculateAnnuityTotalPayment(loanDetails);
+  } else if(loanDetails.type==='classic'){
+      monthlyPayment = calculateClassicMonthlyPayment(loanDetails);
+      totalPayment = calculateClassicTotalPayment(loanDetails);
+  }
+  
+  const realAnnualInterestRate = calculateRealAnnualInterestRate(loanDetails);
+  console.log('realAnnualInterestRate: ', realAnnualInterestRate);
+  updateMonthlyPaymentDisplay(monthlyPayment);
+  updateTotalPaymentDisplay(totalPayment);
+  updateLoanCostsDisplay(loanDetails.loanAmount, totalPayment);
+  updateRealAnnualInterestRateDisplay(realAnnualInterestRate);
+
 }
 
 function handleSpecialCases(inputKey) {
@@ -73,11 +125,17 @@ function updateTotalPaymentDisplay(monthlyPayment) {
   const totalPaymentEl = document.querySelector('.value--total');
   totalPaymentEl.textContent = `${numberWithSpaces(monthlyPayment)} грн`;
 }
+
 function updateLoanCostsDisplay(loanAmount, totalPayment) {
   const loanCostsEl = document.querySelector('.value--costs');
   loanCostsEl.textContent = `${numberWithSpaces(
     calculateLoanCosts(loanAmount, totalPayment),
   )} грн`;
+}
+
+function updateRealAnnualInterestRateDisplay(realRate) {
+  const realInterestEl = document.querySelector('.value--real');
+  realInterestEl.textContent = `${realRate} %`;
 }
 
 function calculateLoanAmount() {
@@ -132,7 +190,7 @@ function calculateAnnuityMonthlyPayment(loanDetails) {
   return parseFloat(monthlyPayment.toFixed(0));
 }
 
-function calculateTotalPayment(loanDetails) {
+function calculateAnnuityTotalPayment(loanDetails) {
   const { loanAmount, annualInterestRate, loanTermInMonths } = loanDetails;
   const monthlyInterestRate = annualInterestRate / 100 / 12;
   const { numerator, denominator } = calculateNumeratorDenominator(
@@ -163,29 +221,90 @@ function calculateNumeratorDenominator(
   return { numerator, denominator };
 }
 
-function calculateRealAnnualInterestRate(
-  nominalInterestRate,
-  compoundingPeriods,
-) {
-  const nominalRateDecimal = nominalInterestRate / 100;
+function calculateRealAnnualInterestRate(loanDetails) {
+  const { annualInterestRate, loanTermInMonths, totalFees, loanAmount } =
+    loanDetails;
+  const nominalRateDecimal = annualInterestRate / 100;
   const realAnnualInterestRate =
-    Math.pow(1 + nominalRateDecimal / compoundingPeriods, compoundingPeriods) -
-    1;
+    Math.pow(1 + nominalRateDecimal / loanTermInMonths, loanTermInMonths) -
+    1 +
+    totalFees / loanAmount;
 
   const realAnnualInterestRatePercentage = realAnnualInterestRate * 100;
 
-  return realAnnualInterestRatePercentage;
+  return parseFloat(realAnnualInterestRatePercentage.toFixed(2));
 }
 
-const nominalInterestRate = 19.7; // in percentage
-const compoundingPeriods = 12; // monthly compounding
+function calculateClassicMonthlyPayment(loanDetails) {
+  const { loanAmount, loanTermInMonths, annualInterestRate } = loanDetails;
+  const stablePayment = loanAmount / loanTermInMonths;
+  const currentDate = new Date();
+  const months = generateMonthsArray(currentDate, loanTermInMonths);
 
-const realAnnualInterestRate = calculateRealAnnualInterestRate(
-  nominalInterestRate,
-  compoundingPeriods,
-);
+  let left = loanAmount;
+  let firstMonthlyPayment;
 
-console.log(
-  'Real Annual Interest Rate:',
-  realAnnualInterestRate.toFixed(2) + '%',
-);
+  for (let i = 0; i < months.length; i++) {
+    const daysInMonth = months[i].daysInMonth;
+    const daysInYear = months[i].daysInYear;
+    const p = (left * annualInterestRate * daysInMonth) / (daysInYear * 100);
+    const monthlyPayment = p + stablePayment;
+
+    if (i === 0) {
+      firstMonthlyPayment = parseFloat(monthlyPayment.toFixed(0));
+    }
+
+    left -= stablePayment;
+  }
+
+  return firstMonthlyPayment;
+}
+
+function calculateClassicTotalPayment(loanDetails) {
+  const { loanAmount, loanTermInMonths, annualInterestRate } = loanDetails;
+  const stablePayment = loanAmount / loanTermInMonths;
+  const currentDate = new Date();
+  const months = generateMonthsArray(currentDate, loanTermInMonths);
+
+  let total = 0;
+  let left = loanAmount;
+
+  for (let i = 0; i < months.length; i++) {
+    const daysInMonth = months[i].daysInMonth;
+    const daysInYear = months[i].daysInYear;
+    const p = (left * annualInterestRate * daysInMonth) / (daysInYear * 100);
+    const monthlyPayment = p + stablePayment;
+
+    total += parseFloat(monthlyPayment.toFixed(0));
+    left -= stablePayment;
+  }
+
+  console.log('total: ', total);
+  return total;
+}
+
+function isLeapYear(year) {
+  return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+}
+
+function generateMonthsArray(startDate, numberOfMonths) {
+  const months = [];
+  let currentDate = new Date(startDate);
+
+  for (let i = 0; i < numberOfMonths; i++) {
+    const month = currentDate.toLocaleString('en-US', { month: 'long' });
+    const daysInMonth = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() + 1,
+      0,
+    ).getDate();
+    const daysInYear = isLeapYear(currentDate.getFullYear()) ? 366 : 365;
+
+    months.push({ month, daysInMonth, daysInYear });
+
+    // Move to the next month
+    currentDate.setMonth(currentDate.getMonth() + 1);
+  }
+
+  return months;
+}
