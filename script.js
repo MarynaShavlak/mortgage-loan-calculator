@@ -1,28 +1,17 @@
 import { loanFees } from './loanFeesData.js';
 import { renderFees } from './renderFees.js';
+import { inputsConfig } from './inputs.js';
+import { createFeeItem } from './createItems.js';
+import { numberWithSpaces } from './utils.js';
+import {
+  calculateLoanAmount,
+  calculateMonthlyPayment,
+  calculateRealAnnualInterestRate,
+  calculateTotalPayment,
+  calculateLoanCosts
+} from './calculations.js';
 
-const inputsConfig = {
-  totalCost: createInputConfig(
-    '#total-cost',
-    '#total-cost-badge',
-    '--thumb-percent',
-    { min: 100000, max: 10000000 },
-  ),
-  advancePayment: createInputConfig(
-    '#advance-payment',
-    '#advance-payment-badge',
-    '--thumb-percent-2',
-    { min: 30, max: 90 },
-  ),
-  creditTerm: createInputConfig(
-    '#credit-term-range',
-    '#credit-term-range-badge',
-    '--thumb-percent-3',
-    { min: 12, max: 240 },
-  ),
-};
-
-const loanDetails = {
+export const loanDetails = {
   loanAmount: 70000,
   annualInterestRate: 19.7,
   loanTermInMonths: 12,
@@ -40,6 +29,10 @@ let selectedFees = [
 const loanAmountEl = document.querySelector('.loan-amount__value');
 const annuityRadio = document.querySelector('.input--annuity');
 const classicRadio = document.querySelector('.input--classic');
+const iconFees = document.querySelector('.icon-fees');
+const iconOptions = document.querySelector('.icon-label');
+iconFees.addEventListener('click', toggleFeesListVisibility);
+iconOptions.addEventListener('click', toggleAddOptionsVisibility);
 
 annuityRadio.addEventListener('change', handleLoanType);
 classicRadio.addEventListener('change', handleLoanType);
@@ -65,6 +58,18 @@ export function updateSelectedFees(feeKey, isChecked) {
   updateAddOptionsInterface(feeKey);
 }
 
+function toggleFeesListVisibility() {
+  iconFees.classList.toggle('icon-fees--close');
+  const list = document.querySelector('.feesList');
+  list.classList.toggle('feesList--close');
+}
+
+function toggleAddOptionsVisibility() {
+  iconOptions.classList.toggle('icon-label--close');
+  const list = document.querySelector('.add-options-list');
+  list.classList.toggle('add-options-list--close');
+}
+
 function updateAddOptionsInterface(feeKey) {
   const addOptionsList = document.querySelector('.add-options-list');
   const fee = selectedFees.find(item => item.key === feeKey);
@@ -79,28 +84,27 @@ function updateAddOptionsInterface(feeKey) {
 function handleFeeUpdate(feeKey, fee, addOptionsList) {
   const listItem = createFeeItem(feeKey, fee);
   addOptionsList.appendChild(listItem);
-
-  updateTotalFees();
-
-  const totalPayment = calculateTotalPayment();
-  updateTotalPaymentDisplay(totalPayment);
-  updateLoanCostsDisplay(loanDetails.loanAmount, totalPayment);
+  updateLoanDetails();
 }
 
 function handleFeeRemoval(feeKey, addOptionsList) {
-  addOptionsList.innerHTML = '';
+  clearAddOptionsList(addOptionsList);
 
   const filtered = selectedFees.filter(item => item.key !== feeKey);
   filtered.forEach(fee => {
     const listItem = createFeeItem(feeKey, fee);
     addOptionsList.appendChild(listItem);
-
-    updateTotalFees();
-
-    const totalPayment = calculateTotalPayment();
-    updateTotalPaymentDisplay(totalPayment);
-    updateLoanCostsDisplay(loanDetails.loanAmount, totalPayment);
   });
+  updateLoanDetails();
+}
+
+function clearAddOptionsList(addOptionsList) {
+  addOptionsList.innerHTML = '';
+}
+
+function updateLoanDetails() {
+  updateTotalFees();
+  updateLoanResults();
 }
 
 function updateTotalFees() {
@@ -109,21 +113,6 @@ function updateTotalFees() {
     0,
   );
   loanDetails.totalFees = totalAmount;
-}
-
-function createFeeItem(feeKey, fee) {
-  const listItem = document.createElement('li');
-  listItem.classList.add('add-option-item');
-  listItem.setAttribute('data-id', feeKey);
-  const labelSpan = document.createElement('span');
-  labelSpan.classList.add('item__label');
-  labelSpan.textContent = fee.fee.name;
-  const valueSpan = document.createElement('span');
-  valueSpan.classList.add('item__value');
-  valueSpan.textContent = `${fee.fee.amount} грн`;
-  listItem.appendChild(labelSpan);
-  listItem.appendChild(valueSpan);
-  return listItem;
 }
 
 function updateThumb(inputKey) {
@@ -148,29 +137,17 @@ function updateLoanType() {
 }
 
 function updateCalculatorInterface() {
-  const totalPayment = calculateTotalPayment();
   const monthlyPayment = calculateMonthlyPayment();
   updateMonthlyPaymentDisplay(monthlyPayment);
-  updateTotalPaymentDisplay(totalPayment);
-  updateLoanCostsDisplay(loanDetails.loanAmount, totalPayment);
   const realAnnualInterestRate = calculateRealAnnualInterestRate(loanDetails);
   updateRealAnnualInterestRateDisplay(realAnnualInterestRate);
+  updateLoanResults();
 }
 
-function calculateTotalPayment() {
-  if (loanDetails.type === 'annuity') {
-    return calculateAnnuityTotalPayment(loanDetails);
-  } else if (loanDetails.type === 'classic') {
-    return calculateClassicTotalPayment(loanDetails);
-  }
-}
-
-function calculateMonthlyPayment() {
-  if (loanDetails.type === 'annuity') {
-    return calculateAnnuityMonthlyPayment(loanDetails);
-  } else if (loanDetails.type === 'classic') {
-    return calculateClassicMonthlyPayment(loanDetails);
-  }
+function updateLoanResults() {
+  const totalPayment = calculateTotalPayment();
+  updateTotalPaymentDisplay(totalPayment);
+  updateLoanCostsDisplay(loanDetails.loanAmount, totalPayment);
 }
 
 function handleLoanType() {
@@ -210,20 +187,8 @@ function updateRealAnnualInterestRateDisplay(realRate) {
   realInterestEl.textContent = `${realRate} %`;
 }
 
-function calculateLoanAmount() {
-  const totalCost = parseFloat(inputsConfig.totalCost.input.value) || 0;
-  const advancePayment =
-    parseFloat(inputsConfig.advancePayment.input.value) || 0;
-  const loanAmount = totalCost - (totalCost * advancePayment) / 100;
-  return loanAmount;
-}
-
 function updateLoanAmount(loanAmount) {
   loanAmountEl.textContent = numberWithSpaces(loanAmount);
-}
-
-function numberWithSpaces(x) {
-  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 }
 
 function handleBlur(inputKey, { min, max }) {
@@ -242,142 +207,3 @@ function handleBlur(inputKey, { min, max }) {
     updateThumb(inputKey);
   };
 }
-
-function createInputConfig(inputSelector, badgeSelector, thumb, range) {
-  const input = document.querySelector(inputSelector);
-  const badge = document.querySelector(badgeSelector);
-  return { input, badge, thumb, range };
-}
-
-function calculateAnnuityMonthlyPayment(loanDetails) {
-  const { loanAmount, annualInterestRate, loanTermInMonths } = loanDetails;
-  const monthlyInterestRate = annualInterestRate / 100 / 12;
-  const { numerator, denominator } = calculateNumeratorDenominator(
-    loanAmount,
-    monthlyInterestRate,
-    loanTermInMonths,
-  );
-
-  const monthlyPayment = numerator / denominator;
-  return parseFloat(monthlyPayment.toFixed(0));
-}
-
-function calculateAnnuityTotalPayment(loanDetails) {
-  const { loanAmount, annualInterestRate, loanTermInMonths, totalFees } =
-    loanDetails;
-  const monthlyInterestRate = annualInterestRate / 100 / 12;
-  const { numerator, denominator } = calculateNumeratorDenominator(
-    loanAmount,
-    monthlyInterestRate,
-    loanTermInMonths,
-  );
-
-  const totalPayment = (numerator / denominator) * loanTermInMonths + totalFees;
-  return parseFloat(totalPayment.toFixed(0));
-}
-
-function calculateLoanCosts(loanAmount, totalPayment) {
-  return totalPayment - loanAmount;
-}
-
-function calculateNumeratorDenominator(
-  loanAmount,
-  monthlyInterestRate,
-  loanTermInMonths,
-) {
-  const numerator =
-    loanAmount *
-    monthlyInterestRate *
-    Math.pow(1 + monthlyInterestRate, loanTermInMonths);
-  const denominator = Math.pow(1 + monthlyInterestRate, loanTermInMonths) - 1;
-
-  return { numerator, denominator };
-}
-
-function calculateRealAnnualInterestRate(loanDetails) {
-  const { annualInterestRate, loanTermInMonths, totalFees, loanAmount } =
-    loanDetails;
-  const nominalRateDecimal = annualInterestRate / 100;
-  const realAnnualInterestRate =
-    Math.pow(1 + nominalRateDecimal / loanTermInMonths, loanTermInMonths) -
-    1 +
-    totalFees / loanAmount;
-
-  const realAnnualInterestRatePercentage = realAnnualInterestRate * 100;
-
-  return parseFloat(realAnnualInterestRatePercentage.toFixed(2));
-}
-
-function calculateClassicMonthlyPayment(loanDetails) {
-  const { loanAmount, loanTermInMonths, annualInterestRate } = loanDetails;
-  const stablePayment = loanAmount / loanTermInMonths;
-  const currentDate = new Date();
-  const months = generateMonthsArray(currentDate, loanTermInMonths);
-
-  let left = loanAmount;
-  let firstMonthlyPayment;
-
-  for (let i = 0; i < months.length; i++) {
-    const daysInMonth = months[i].daysInMonth;
-    const daysInYear = months[i].daysInYear;
-    const p = (left * annualInterestRate * daysInMonth) / (daysInYear * 100);
-    const monthlyPayment = p + stablePayment;
-
-    if (i === 0) {
-      firstMonthlyPayment = parseFloat(monthlyPayment.toFixed(0));
-    }
-
-    left -= stablePayment;
-  }
-
-  return firstMonthlyPayment;
-}
-
-function calculateClassicTotalPayment(loanDetails) {
-  const { loanAmount, loanTermInMonths, annualInterestRate } = loanDetails;
-  const stablePayment = loanAmount / loanTermInMonths;
-  const currentDate = new Date();
-  const months = generateMonthsArray(currentDate, loanTermInMonths);
-
-  let total = 0;
-  let left = loanAmount;
-
-  for (let i = 0; i < months.length; i++) {
-    const daysInMonth = months[i].daysInMonth;
-    const daysInYear = months[i].daysInYear;
-    const p = (left * annualInterestRate * daysInMonth) / (daysInYear * 100);
-    const monthlyPayment = p + stablePayment;
-
-    total += parseFloat(monthlyPayment.toFixed(0));
-    left -= stablePayment;
-  }
-
-  return total;
-}
-
-function isLeapYear(year) {
-  return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
-}
-
-function generateMonthsArray(startDate, numberOfMonths) {
-  const months = [];
-  let currentDate = new Date(startDate);
-
-  for (let i = 0; i < numberOfMonths; i++) {
-    const month = currentDate.toLocaleString('en-US', { month: 'long' });
-    const daysInMonth = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth() + 1,
-      0,
-    ).getDate();
-    const daysInYear = isLeapYear(currentDate.getFullYear()) ? 366 : 365;
-
-    months.push({ month, daysInMonth, daysInYear });
-
-    // Move to the next month
-    currentDate.setMonth(currentDate.getMonth() + 1);
-  }
-
-  return months;
-}
-
