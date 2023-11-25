@@ -1,3 +1,4 @@
+import { loanFees } from "./loanFeesData.js";
 const inputsConfig = {
   totalCost: createInputConfig(
     '#total-cost',
@@ -27,11 +28,14 @@ const loanDetails = {
   totalFees: 1000,
 };
 
+
+
 const loanAmountEl = document.querySelector('.loan-amount__value');
 const annuityRadio = document.querySelector('.input--annuity');
 const classicRadio = document.querySelector('.input--classic');
 annuityRadio.addEventListener('change', handleLoanType);
 classicRadio.addEventListener('change', handleLoanType);
+updateCalculatorInterface();
 
 Object.keys(inputsConfig).forEach(inputKey => {
   const { input, badge } = inputsConfig[inputKey];
@@ -45,22 +49,7 @@ Object.keys(inputsConfig).forEach(inputKey => {
 function updateThumb(inputKey) {
   updateRange(inputKey);
   handleSpecialCases(inputKey);
-  let monthlyPayment;
-  let totalPayment;
-  if(loanDetails.type==='annuity') {
-      monthlyPayment = calculateAnnuityMonthlyPayment(loanDetails);
-      totalPayment = calculateAnnuityTotalPayment(loanDetails);
-  } else if(loanDetails.type==='classic'){
-      monthlyPayment = calculateClassicMonthlyPayment(loanDetails);
-      totalPayment = calculateClassicTotalPayment(loanDetails);
-  }
-  
-  const realAnnualInterestRate = calculateRealAnnualInterestRate(loanDetails);
-  console.log('realAnnualInterestRate: ', realAnnualInterestRate);
-  updateMonthlyPaymentDisplay(monthlyPayment);
-  updateTotalPaymentDisplay(totalPayment);
-  updateLoanCostsDisplay(loanDetails.loanAmount, totalPayment);
-  updateRealAnnualInterestRateDisplay(realAnnualInterestRate);
+  updateCalculatorInterface();
 }
 
 function updateRange(inputKey) {
@@ -75,35 +64,30 @@ function updateLoanType() {
     loanDetails.type = 'annuity';
   } else if (classicRadio.checked) {
     loanDetails.type = 'classic';
-}
+  }
 }
 
 function updateCalculatorInterface() {
-      
-}
-
-
-
-
-function handleLoanType() {
-      updateLoanType();  
-      let monthlyPayment;
+  let monthlyPayment;
   let totalPayment;
-  if(loanDetails.type==='annuity') {
-      monthlyPayment = calculateAnnuityMonthlyPayment(loanDetails);
-      totalPayment = calculateAnnuityTotalPayment(loanDetails);
-  } else if(loanDetails.type==='classic'){
-      monthlyPayment = calculateClassicMonthlyPayment(loanDetails);
-      totalPayment = calculateClassicTotalPayment(loanDetails);
+  if (loanDetails.type === 'annuity') {
+    monthlyPayment = calculateAnnuityMonthlyPayment(loanDetails);
+    totalPayment = calculateAnnuityTotalPayment(loanDetails);
+  } else if (loanDetails.type === 'classic') {
+    monthlyPayment = calculateClassicMonthlyPayment(loanDetails);
+    totalPayment = calculateClassicTotalPayment(loanDetails);
   }
-  
+
   const realAnnualInterestRate = calculateRealAnnualInterestRate(loanDetails);
-  console.log('realAnnualInterestRate: ', realAnnualInterestRate);
   updateMonthlyPaymentDisplay(monthlyPayment);
   updateTotalPaymentDisplay(totalPayment);
   updateLoanCostsDisplay(loanDetails.loanAmount, totalPayment);
   updateRealAnnualInterestRateDisplay(realAnnualInterestRate);
+}
 
+function handleLoanType() {
+  updateLoanType();
+  updateCalculatorInterface();
 }
 
 function handleSpecialCases(inputKey) {
@@ -279,7 +263,6 @@ function calculateClassicTotalPayment(loanDetails) {
     left -= stablePayment;
   }
 
-  console.log('total: ', total);
   return total;
 }
 
@@ -308,3 +291,34 @@ function generateMonthsArray(startDate, numberOfMonths) {
 
   return months;
 }
+
+
+
+const feesListElement = document.querySelector('.feesList');
+
+  for (const feeKey in loanFees) {
+    if (loanFees.hasOwnProperty(feeKey)) {
+      const fee = loanFees[feeKey];
+
+      const listItem = document.createElement('li');
+      listItem.className ='feesList__item';
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.className = 'fee__checkbox'
+
+
+      checkbox.id = feeKey;
+      
+      const label = document.createElement('label');
+      label.className ='feesList__label';
+      const span = document.createElement('span');
+      span.textContent = `${fee.name}`;
+      const checkIcon = document.createElement('i');
+      checkIcon.className = 'fa-solid fa-check fee__checkbox--custom';
+      label.appendChild(checkbox);
+      label.appendChild(checkIcon);
+      label.appendChild(span);
+      listItem.appendChild(label);
+      feesListElement.appendChild(listItem);
+    }
+  }

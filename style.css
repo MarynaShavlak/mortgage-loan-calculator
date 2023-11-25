@@ -1,12 +1,12 @@
 * {
-    box-sizing: border-box;
-    margin:0;
-    padding:0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 body {
   background-color: antiquewhite;
-  font-family: Roboto,-apple-system,BlinkMacSystemFont,Arial,sans-serif;
+  font-family: Roboto, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
 }
 
 ul {
@@ -20,54 +20,53 @@ ul {
 }
 
 .calculator__title {
-   text-align: center;
-   margin-top: 50px;
-   margin-bottom: 50px;
-   font-size: 60px;
+  text-align: center;
+  margin-top: 50px;
+  margin-bottom: 50px;
+  font-size: 60px;
 }
 
 .calculator__options {
-   width: 540px;
+  width: 540px;
 }
 
 .calculator__content {
-    padding: 50px;
-    width: 540px;
+  padding: 50px;
+  width: 540px;
 }
 
-
 .input-label {
-    font-family: Roboto,-apple-system,BlinkMacSystemFont,Arial,sans-serif;
-    font-size: 12px;
-    font-weight: 400;
-    line-height: 17px;
-    display: block;
-    margin-bottom: 8px;
-    color: #656565;
+  font-family: Roboto, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 17px;
+  display: block;
+  margin-bottom: 8px;
+  color: #656565;
 }
 
 .label--type-payment {
-   margin-bottom: 18px;
+  margin-bottom: 18px;
 }
 
 .input--bordered {
-    width: 100%;
-    height: 56px;
-    padding: 15px 20px;
-    font-family: FuturaPT,-apple-system,BlinkMacSystemFont,Arial,sans-serif;
-    font-size: 24px;
-    font-weight: 500;
-    line-height: 26px;
-    background-color: transparent;
-    border: 1px solid #656565;
-    outline: none;
+  width: 100%;
+  height: 56px;
+  padding: 15px 20px;
+  font-family: FuturaPT, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 26px;
+  background-color: transparent;
+  border: 1px solid #656565;
+  outline: none;
 }
 
 .input-field {
   width: 100%;
   height: 56px;
   padding: 15px 20px;
-  font-family: FuturaPT,-apple-system,BlinkMacSystemFont,Arial,sans-serif;
+  font-family: FuturaPT, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
   font-size: 24px;
   font-weight: 500;
   line-height: 26px;
@@ -76,78 +75,90 @@ ul {
   border-bottom: 1px solid #656565;
 
   outline: none;
-
 }
 
-
 .input-block {
-    margin-bottom: 15px;
-    position: relative;
+  margin-bottom: 15px;
+  position: relative;
 }
 
 .block-term {
   width: 220px;
-  margin:0;
+  margin: 0;
 }
 
 .input-limits {
-    margin-top: 15px;
-    display: flex;
-    justify-content: space-between;
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
 }
 
-
-.input-limit  {
-    font-family: Roboto,-apple-system,BlinkMacSystemFont,Arial,sans-serif;
-    font-size: 12px;
-    font-weight: 400;
-    line-height: 17px;
-    color: #656565;
+.input-limit {
+  font-family: Roboto, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 17px;
+  color: #656565;
 }
 
 #total-cost {
   position: absolute;
-  top:71px;
-  left:0;
+  top: 71px;
+  left: 0;
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
   height: 4px;
   margin: 5.4px 0;
-  background: linear-gradient(to right, #00829B, #00829B calc( var(--thumb-percent) * 100% ), #fff calc( var(--thumb-percent) * 100% ), #fff);
+  background: linear-gradient(
+    to right,
+    #00829b,
+    #00829b calc(var(--thumb-percent) * 100%),
+    #fff calc(var(--thumb-percent) * 100%),
+    #fff
+  );
 }
 #advance-payment {
   -webkit-appearance: none;
   appearance: none;
   position: absolute;
-  top:71px;
-  left:0;
+  top: 71px;
+  left: 0;
   width: 100%;
   height: 4px;
   margin: 5.4px 0;
-  background: linear-gradient(to right, #00829B, #00829B calc( var(--thumb-percent-2) * 100% ), #fff calc( var(--thumb-percent-2) * 100% ), #fff);
+  background: linear-gradient(
+    to right,
+    #00829b,
+    #00829b calc(var(--thumb-percent-2) * 100%),
+    #fff calc(var(--thumb-percent-2) * 100%),
+    #fff
+  );
 }
 #credit-term-range {
   -webkit-appearance: none;
   appearance: none;
   position: absolute;
-  top:71px;
-  left:0;
+  top: 71px;
+  left: 0;
   width: 100%;
   height: 4px;
   margin: 5.4px 0;
-  background: linear-gradient(to right, #00829B, #00829B calc( var(--thumb-percent-3) * 100% ), #fff calc( var(--thumb-percent-3) * 100% ), #fff);
+  background: linear-gradient(
+    to right,
+    #00829b,
+    #00829b calc(var(--thumb-percent-3) * 100%),
+    #fff calc(var(--thumb-percent-3) * 100%),
+    #fff
+  );
 }
 
-
-
-
 /* For WebKit/Blink Browsers */
-input[type="range"]::-webkit-slider-thumb {
+input[type='range']::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  background-color: #00829B;
-  border: none; 
+  background-color: #00829b;
+  border: none;
   height: 25px;
   width: 10px;
   cursor: pointer;
@@ -156,209 +167,201 @@ input[type="range"]::-webkit-slider-thumb {
   transform: translateY(-50%); */
 }
 /* For Firefox */
-input[type="range"]::-moz-range-thumb {
-  background-color: #00829B;
-  border: none; 
+input[type='range']::-moz-range-thumb {
+  background-color: #00829b;
+  border: none;
   height: 25px;
   width: 10px;
   cursor: pointer;
 }
 
 /* For IE/Edge */
-input[type="range"]::-ms-thumb {
-  background-color: #00829B;
-  border: none; 
+input[type='range']::-ms-thumb {
+  background-color: #00829b;
+  border: none;
   height: 25px;
   width: 10px;
   cursor: pointer;
-
 }
 
 /* Remove default styles in all browsers */
-input[type="range"] {
+input[type='range'] {
   -webkit-appearance: none;
-  appearance: none; 
+  appearance: none;
   width: 100%;
   margin: 5.4px 0;
 }
 
-input[type="range"]:focus {
+input[type='range']:focus {
   outline: none;
 }
 
-input[type="range"]::-moz-focus-outer {
+input[type='range']::-moz-focus-outer {
   border: 0;
 }
 
-
-
-  .payment-types {
-    display: flex;
-    gap: 30px;
-    border: none;
-  }
-
-  .loan-amount {
-    padding: 10px 20px;
-    background-color: #F8F8FA;
-    width: fit-content;
-    height: 62px
-    
-  }
-
-  .loan-amount__label {
-    margin-bottom: 10px;
-  }
-
-  .loan-amount__value {
-    font-weight: 700;
-    text-align: center;
-  }
-
-  .loan__wrap {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-  }
-  
-  .payment__label {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    font-size: 14px;
-    font-family: Roboto,-apple-system,BlinkMacSystemFont,Arial,sans-serif;
-
-  }
-
-  .payment__input {
-    margin-right: 12px;
-  }
-
-
-
-  .calculator__results {
-    display: flex;
-    flex-direction: column;
-    padding: 50px;
-    width: 460px;
-    background-color: #00829B;
-  }
-
-  .month-payment-block {
-    padding: 20px;
-    color: #fff;
-    text-align: center;
-    background-color: rgba(0,0,0,0.1);
-    margin-bottom: 30px;
-  }
-
-  .month-payment-block__value {
-    margin-top: 5px;
-    font-family: FuturaPT,-apple-system,BlinkMacSystemFont, Arial,sans-serif;
-    font-size: 38px;
-    font-weight: 600;
-    line-height: 42px;
-  }
-
-  .add-payments-block {
-    margin-bottom: 30px;
-    border: 1px solid rgba(255,255,255,0.1);
-    padding: 20px;
-  }
-.input-label__wrap {
-   display: flex;
-   justify-content: space-between;
-   align-items: baseline;
+.payment-types {
+  display: flex;
+  gap: 30px;
+  border: none;
 }
-  .add-payments__label {
-        font-size: 12px;
-    line-height: 17px;
-    color: rgba(255,255,255,0.6);
-  }
+
+.loan-amount {
+  padding: 10px 20px;
+  background-color: #f8f8fa;
+  width: fit-content;
+  height: 62px;
+}
+
+.loan-amount__label {
+  margin-bottom: 10px;
+}
+
+.loan-amount__value {
+  font-weight: 700;
+  text-align: center;
+}
+
+.loan__wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.payment__label {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  font-size: 14px;
+  font-family: Roboto, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+}
+
+.payment__input {
+  margin-right: 12px;
+}
+
+.calculator__results {
+  display: flex;
+  flex-direction: column;
+  padding: 50px;
+  width: 460px;
+  background-color: #00829b;
+}
+
+.month-payment-block {
+  padding: 20px;
+  color: #fff;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+}
+
+.month-payment-block__value {
+  margin-top: 5px;
+  font-family: FuturaPT, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+  font-size: 38px;
+  font-weight: 600;
+  line-height: 42px;
+}
+
+.add-payments-block {
+  margin-bottom: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 20px;
+}
+.input-label__wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.add-payments__label {
+  font-size: 12px;
+  line-height: 17px;
+  color: rgba(255, 255, 255, 0.6);
+}
 
 .icon-label {
   font-size: 22px;
-  color: rgba(255,255,255,0.6);
+  color: rgba(255, 255, 255, 0.6);
 }
 
-  .add-options-list {
-    margin-top: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  }
+.add-options-list {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
 
-  .add-option-item {
-    display: flex;
-    justify-content: space-between;
-    color: #fff;
-    font-size: 12px;
-    font-weight: 400;
-    line-height: 17px;
-  }
+.add-option-item {
+  display: flex;
+  justify-content: space-between;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 17px;
+}
 
+.results {
+  display: flex;
+  margin-bottom: 20px;
+}
+.results__item {
+  flex-basis: calc(100% / 3);
+  display: flex;
+  flex-direction: column;
+  padding: 0 9px;
+  gap: 10px;
+  text-align: center;
+}
 
-  .results {
-     display: flex;
-     margin-bottom: 20px;
-  }
-  .results__item {
-    flex-basis: calc(100% / 3 );
-    display: flex;
-    flex-direction: column;
-    padding: 0 9px;
-    gap: 10px;
-    text-align: center;
-  }
+.results__label {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 17px;
+  color: rgba(255, 255, 255, 0.6);
+}
 
-  .results__label {
-    font-size: 12px;
-    font-weight: 400;
-    line-height: 17px;
-    color: rgba(255,255,255,0.6);
-  }
+.results__value {
+  font-size: 16px;
+  line-height: 16px;
+  color: #fff;
+}
 
-  .results__value {
-    font-size: 16px;
-    line-height: 16px;
-    color: #fff;
-  }
+.send-form-btn {
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 56px;
+  cursor: pointer;
+  background-color: #dce123;
+  text-transform: uppercase;
+  transition: background-color 300ms ease-in;
+}
 
-  .send-form-btn {
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 56px;
-    cursor: pointer;
-    background-color: #DCE123;
-    text-transform: uppercase;
-    transition : background-color 300ms ease-in;
-  }
-
-  .send-form-btn:hover, 
-  .send-form-btn:focus {
-    background-color:#dbe123da; 
-  }
+.send-form-btn:hover,
+.send-form-btn:focus {
+  background-color: #dbe123da;
+}
 
 .custom-radio-btn {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-   width:20px;
-   height: 20px;
-   border-radius: 50%;
-   border: 1px solid #fff;
-   border-color: #656565;
-    transition: border-color 0.2s ease-in;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid #fff;
+  border-color: #656565;
+  transition: border-color 0.2s ease-in;
 }
 
 .custom-radio-btn::before {
   opacity: 0;
-  content:'';
-  background-color: #00503C;
+  content: '';
+  background-color: #00503c;
   width: 7px;
   height: 7px;
   border-radius: 50%;
@@ -378,11 +381,85 @@ input[type="range"]::-moz-focus-outer {
   overflow: hidden;
 }
 
-.payment__input:focus + .custom-radio-btn::before  {
+.payment__input:focus + .custom-radio-btn::before {
   opacity: 1;
 }
-.payment__input:checked + .custom-radio-btn::before  {
+.payment__input:checked + .custom-radio-btn::before {
   opacity: 1;
 }
 
+.fees {
+  margin-top: 30px;
+  padding: 20px;
+  background-color: #f8f8fa;
+}
 
+.fees__title {
+  color: #656565;
+  font-family: Roboto, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 21px;
+  margin-bottom: 20px;
+}
+
+.fees__title-wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.feesList {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.feesList__label {
+  font-size: 14px;
+  line-height: 24px;
+  display: flex;
+  align-items: baseline;
+  gap: 17px;
+}
+
+.icon-fees {
+  font-size: 22px;
+  color: #656565;
+}
+
+.fee__checkbox {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+  white-space: nowrap;
+  clip-path: inset(100%);
+  clip: rect(0 0 0 0);
+  overflow: hidden;
+}
+
+.fee__checkbox:checked + .fee__checkbox--custom {
+  border-color:#00503c;
+  background-color: #00503c;
+  outline: none;
+  color: #ffffff;
+}
+
+
+
+.fee__checkbox--custom {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  min-height: 20px;
+  cursor: pointer;
+  border: 1px solid #000000;
+  color: transparent;
+  /* color: #00503c; */
+}
