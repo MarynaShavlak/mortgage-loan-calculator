@@ -188,7 +188,10 @@
                     ><input
                       class="application__input"
                       type="text"
-                      name="modal-user-name"
+                      name="userName"
+                      data-required="true"
+                      data-min-length="2"
+                      data-max-length="20"
                     />
                     <i class="fa-solid fa-user application__icon"></i>
                   </span>
@@ -202,7 +205,12 @@
                     ><input
                       class="application__input"
                       type="tel"
-                      name="modal-user-tel"
+                      name="userTel"
+                      data-required="true"
+                      data-min-length="10" 
+                      data-max-length="10" 
+                      pattern="\d+"
+                      title="Номер маэ бути у форматі 0ХХХХХХХХХ"
                     />
                     <i class="fa-solid fa-phone application__icon"></i>
                   </span>
@@ -219,6 +227,8 @@
                 name="studio-policy-check"
                 value="accept-policy"
                 required
+                data-required="true"
+                checked
               />
               <i class="fa-solid fa-check application__checkbox-custom"></i>
               <span
